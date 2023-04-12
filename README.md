@@ -1,6 +1,6 @@
 ****STILL UNDER DEVELOPMENT****
 
-Comprenhensive detail of how the program works is commented inside the source code, please check it out
+Comprenhensive details about how the program works is commented inside the source code, please check it out
 
 For now, the app can...,
 1. Create a file for user to keep all their todo
