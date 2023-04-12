@@ -4,7 +4,7 @@ Comprenhensive details about how the program works is commented inside the sourc
 
 For now, the app can...,
 1. Create a file for user to keep all their todo
-2. Add countless of TODO
+2. Add countless number of TODO
 3. Adds TODO with the current date and time
 4. Saves todo in a file so when user logs out or exit the app and return later, their saved TODO is still intact and nothing is lost
 5. Display all TODO
