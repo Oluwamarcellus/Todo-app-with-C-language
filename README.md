@@ -1,4 +1,5 @@
 ****STILL UNDER DEVELOPMENT****
+
 Comprenhensive detail of how the program works is commented inside the source code, please check it out
 
 For now, the app can...,
@@ -9,6 +10,7 @@ For now, the app can...,
 5. Display all TODO
 
 //TO BE ADDED...
+
 6. Search for TODO
 7. Delete TODO
 8. Create separate file for users so each user can only be limited to their own TODO
