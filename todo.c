@@ -7,7 +7,7 @@ struct todo
 {
     char title[100];
     char body[2000];
-    char time[30];
+    char time[50];
 };
 
 //FUNCTION PROTOTYPES
@@ -19,6 +19,7 @@ struct todo
     void display_all_todo(void);
     void search_todo();
     void action_control(char *ch, char *str);
+    char *strupper(char *s);
 
 int main(void)
 {
@@ -33,93 +34,96 @@ int main(void)
     clear_screen(); //clears the screen, it is defined below main function
     while(1)
     {
+        printf("===%s's TODO LIST===\n\n", strupper(name)); //The strupper() function coverts string to UPPERCASE, it is defined below the main function
+
         t_opt = 0;
-        printf("===%s's TODO LIST===\n\n", strupr(name)); //The strupr() function coverts string to UPPER CASE, it is from string.h library
-        start: //This is an implementation of the GOTO function in C, it's more like a loop if certain condition is not met
-        printf("PRESS...\n\n");
-        printf("1. To add todo\n");
-        printf("2. To display all todo\n");
-        printf("3. To search todo\n");
-        printf("4. To update todo\n");
-        printf("5. To delete todo\n");
-        printf("6. To quit\n");
-        printf("\nYOUR CHOICE: \t");
-        scanf("%d", &t_opt);
-        clear_input_stream();//cleans the input stream after user's inputs, it is defined below main function
-
-        if (t_opt != 1 && t_opt != 2 && t_opt != 3 && t_opt != 4 && t_opt != 5 && t_opt != 6) //Checking if user had selected the wromg option
+        while (t_opt != 1 && t_opt != 2 && t_opt != 3 && t_opt != 4 && t_opt != 5 && t_opt != 6) //Checking if user had selected the wromg option
         {
+            printf("PRESS...\n\n");
+            printf("1. To add todo\n");
+            printf("2. To display all todo\n");
+            printf("3. To search todo\n");
+            printf("4. To update todo\n");
+            printf("5. To delete todo\n");
+            printf("6. To quit\n");
+            printf("\nYOUR CHOICE: \t");
+            scanf("%d", &t_opt);
+            clear_input_stream();//cleans the input stream after user's inputs, it is defined below main function
             clear_screen();
-            printf("PLEASE SELECT THE RIGHT OPTION!\n\n");
-            goto start; //The trigger of the GOTO function talked about earlier
-        } else
-        {
-                switch(t_opt)
+
+            if (t_opt != 1 && t_opt != 2 && t_opt != 3 && t_opt != 4 && t_opt != 5 && t_opt != 6)
             {
-                //Adding Todo
-                case 1:
-                    a_opt = 'y';
-                    while (a_opt == 'y' || a_opt == 'Y')
-                    {
-                        clear_screen();
-                        add_todo(); //Main function that adds the Todo, it's defined below
-
-                        //This function is defined below main function, it asks user if they want to add another todo and ensure they enter the right option
-                        //I passed in the address of "a_opt" into the function bcoz you can only modify a variable declared outside a function through its address
-                        action_control(&a_opt, "Do you wish to add another TODO");
-
-                        if (a_opt == 'n' || a_opt == 'N')
-                        {
-                            break;
-                        }
-                    }
-                    break;
-
-                //Disaplaying all todos saved in file
-                case 2:
-                    clear_screen();
-                    display_all_todo(); //Function tha displays all Todo
-                    printf("\nPress ENTER key twice to return to the main menu\t");
-                    getchar();
-                    clear_input_stream();
-                break;
-
-                //Searching for todo
-                case 3:
-                    a_opt = 'y';
-                    while (a_opt == 'y' || a_opt == 'Y')
-                    {
-                        clear_screen();
-                        search_todo(); //Function that searches Todo, it's defined below
-
-                        //The ""action_control"" function is defined below main function
-                        //It asks user if they want to add another todo and ensure they enter the right option
-                        //I passed in the address of "a_opt" into the function bcoz you can only modify a variable declared outside a function through its address except if it's a global variable
-                        action_control(&a_opt, "Do you wish to perform another SEARCH");
-
-                        if (a_opt == 'n' || a_opt == 'N')
-                        {
-                            break;
-                        }
-                    }
-                break;
-
-                case 4:
-                    clear_screen();
-                    printf("\n\n\t\t\tupdate todo\n\n\n\n", name);
-                break;
-
-                case 5:
-                    clear_screen();
-                    printf("\n\n\t\t\tdelete todo\n\n\n\n", name);
-                break;
-
-                case 6:
-                    clear_screen();
-                    printf("\n\n\t\t\tGOODBYE FOR NOW %s, SEE YOU AGAIN\n\n\n\n", name);
-                    exit(0);
+                printf("PLEASE SELECT THE RIGHT OPTION!\n\n");
+            } else
+            {
                 break;
             }
+        }
+        switch(t_opt)
+        {
+            //Adding Todo
+            case 1:
+                a_opt = 'y';
+                while (a_opt == 'y' || a_opt == 'Y')
+                {
+                    clear_screen();
+                    add_todo(); //Main function that adds the Todo, it's defined below
+
+                    //This function is defined below main function, it asks user if they want to add another todo and ensure they enter the right option
+                    //I passed in the address of 'a_opt' into the function bcoz you can only modify a variable declared outside a function through its address
+                    action_control(&a_opt, "Do you wish to add another TODO");
+
+                    if (a_opt == 'n' || a_opt == 'N')
+                    {
+                        break;
+                    }
+                }
+                break;
+
+            //Disaplaying all todos saved in file
+            case 2:
+                clear_screen();
+                display_all_todo(); //Function tha displays all Todo
+                printf("\nPress ENTER key to return to the main menu\t");
+                getchar();
+                //clear_input_stream();
+            break;
+
+            //Searching for todo
+            case 3:
+                a_opt = 'y';
+                while (a_opt == 'y' || a_opt == 'Y')
+                {
+                    clear_screen();
+                    search_todo(); //Function that searches Todo, it's defined below
+
+                    //The 'action_control' function is defined below main function
+                    //It asks user if they want to add another todo and ensure they enter the right option
+                    //I passed in the address of "a_opt" into the function bcoz you can only modify a variable declared outside a function through its address except if it's a global variable
+                    action_control(&a_opt, "Do you wish to perform another SEARCH");
+
+                    if (a_opt == 'n' || a_opt == 'N')
+                    {
+                        break;
+                    }
+                }
+            break;
+
+            case 4:
+                clear_screen();
+                printf("\n\n\t\t\tupdate todo\n\n\n\n", name);
+            break;
+
+            case 5:
+                clear_screen();
+                printf("\n\n\t\t\tdelete todo\n\n\n\n", name);
+            break;
+
+            case 6:
+                clear_screen();
+                printf("\n\n\t\t\tGOODBYE FOR NOW %s, SEE YOU AGAIN\n\n\n\n", name);
+                exit(0);
+            break;
         }
         clear_screen();
     }
@@ -127,16 +131,33 @@ int main(void)
     return (0);
 }
 
+
+//BELOW ARE THE DEFINITIONS OF ALL THE FUNCTIONS USED IN THE CODE, PLEASE CALMLY GO THROUGH THEM
+
 //function that cleans the input stream after user's inputs
 void clear_input_stream(void)
 {
-    while((getchar()) != '\n');
+    //This is a standard library function that clears the input stream
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 //function that clears the screen
 void clear_screen(void)
 {
-    system("cls");
+    system("clear");
+}
+
+//FGunction that convert string to uppercase
+char *strupper(char *s)
+{
+    if (s == 0)
+        return 0;
+    for (int i = 0; s[i] != 0; i++)
+    {
+        s[i] = toupper(s[i]); //toupper is string.h library function that converts a character to uppercase
+    }
+    return s;
 }
 
 
@@ -205,7 +226,7 @@ void add_todo(void)
 void display_todo(struct todo *todo_details)
 {
     printf("==============================================================================\n\n");
-    printf("TODO TITLE:\t%s\n\n", strupr(todo_details->title));
+    printf("TODO TITLE:\t%s\n\n", strupper(todo_details->title));
     printf("TODO DETAILS:\t%s\n\n", todo_details->body);
     printf("TODO TIME:\t%s\n\n", todo_details->time);
     printf("==============================================================================\n\n");
@@ -262,12 +283,12 @@ void search_todo()
     {
             //This checks if the user input matches with any todo title from the saved file we're looping through
             //The strstr function is from string.h library, it searches for a sub-string in a string and returns 0 if not found
-            //The strupr function converts string to uppercase and I used this because I dont want our seacrh to be case sensitive
+            //The strupper function converts string to uppercase, it is defined below the main function
         found = 0; //This keeps track of the number of matched todo from the search
         clear_screen();
         while (fread(&stodo, sizeof(struct todo), 1, fp) != 0)
         {
-            if (strstr(strupr(stodo.title), strupr(str)) != 0)
+            if (strstr(strupper(stodo.title), strupper(str)) != 0)
             {
                 display_todo(&stodo); //Recall this function that prints or displays todo from struct?
                 found++;
