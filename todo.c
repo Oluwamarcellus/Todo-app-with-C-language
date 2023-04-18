@@ -20,6 +20,7 @@ struct todo
     void search_todo();
     void action_control(char *ch, char *str);
     char *strupper(char *s);
+    void update_todo(void);
 
 int main(void)
 {
