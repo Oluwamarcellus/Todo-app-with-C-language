@@ -8,9 +8,10 @@ For now, the app can...,
 3. Adds TODO with the current date and time
 4. Saves todo in a file so when user logs out or exit the app and return later, their saved TODO is still intact and nothing is lost
 5. Display all TODO
+6. Search for todo with todo title
+7. Update todo keeping the order and time intact
 
 //TO BE ADDED...
 
-6. Search for TODO
-7. Delete TODO
-8. Create separate file for users so each user can only be limited to their own TODO
+1. Delete TODO
+2. Create separate file for users so each user can only be limited to their own TODO

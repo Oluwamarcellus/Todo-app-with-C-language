@@ -5,8 +5,8 @@
 
 struct todo
 {
-    char title[100];
     char body[2000];
+    char title[100];
     char time[50];
 };
 
@@ -69,21 +69,17 @@ int main(void)
                     clear_screen();
                     add_todo(); //Main function that adds the Todo, it's defined below
 
-                    //This function is defined below main function, it asks user if they want to add another todo and ensure they enter the right option
-                    //I passed in the address of 'a_opt' into the function bcoz you can only modify a variable declared outside a function through its address
-                    action_control(&a_opt, "Do you wish to add another TODO");
-
-                    if (a_opt == 'n' || a_opt == 'N')
-                    {
-                        break;
-                    }
+                    //The 'action_control' function is defined below main function
+                    //It asks user if they want to add another todo and ensure they enter the right option
+                    //I passed in the address of "a_opt" into the function bcoz you can only modify a variable declared outside a function through its address except if it's a global variable
+                    action_control(&a_opt, "Do you wish to add another TODO?");
                 }
                 break;
 
             //Disaplaying all todos saved in file
             case 2:
                 clear_screen();
-                display_all_todo(); //Function tha displays all Todo
+                display_all_todo(); //Function that displays all Todo
                 printf("\nPress ENTER key to return to the main menu\t");
                 getchar();
                 //clear_input_stream();
@@ -97,21 +93,13 @@ int main(void)
                     clear_screen();
                     search_todo(); //Function that searches Todo, it's defined below
 
-                    //The 'action_control' function is defined below main function
-                    //It asks user if they want to add another todo and ensure they enter the right option
-                    //I passed in the address of "a_opt" into the function bcoz you can only modify a variable declared outside a function through its address except if it's a global variable
-                    action_control(&a_opt, "Do you wish to perform another SEARCH");
-
-                    if (a_opt == 'n' || a_opt == 'N')
-                    {
-                        break;
-                    }
+                    action_control(&a_opt, "Do you wish to perform another SEARCH?");
                 }
             break;
 
             case 4:
                 clear_screen();
-                printf("\n\n\t\t\tupdate todo\n\n\n\n", name);
+                update_todo(); //Function that updates todo
             break;
 
             case 5:
@@ -145,7 +133,7 @@ void clear_input_stream(void)
 //function that clears the screen
 void clear_screen(void)
 {
-    system("clear");
+    system("cls");
 }
 
 //FGunction that convert string to uppercase
@@ -167,7 +155,7 @@ char *strupper(char *s)
 //The second arguement(*str) is a pointer to a string wich is the message to display to the user
 void action_control(char *ch, char *str)
 {
-    printf("%s?(y/n):\t", str);
+    printf("\n%s?(y/n):\t", str);
     *ch = getchar();
     clear_input_stream();
 
@@ -175,7 +163,7 @@ void action_control(char *ch, char *str)
     {
         clear_screen();
         printf("PLEASE ENTER THE CORRECT OPTION!\n\n");
-        printf("%s?(y/n):\t", str);
+        printf("%s(y/n):\t", str);
         *ch = getchar();
         clear_input_stream();
     }
@@ -191,15 +179,15 @@ void add_todo(void)
 
     struct todo todo_details;
 
-    //Getting todo title from the user
-    printf("Enter your todo title(e.g FOOTBALL):\t");
-    fgets(todo_details.title, sizeof(todo_details.title), stdin);
-    todo_details.title[strlen(todo_details.title) - 1] = '\0'; //fgets always adds '\n' character to inputs, this function gets read of the character
-
     //Getting todo message from the user
-    printf("Enter your todo messsage:\t\t");
+    printf("ENTER YOUR TODO DETAILS:\t\t");
     fgets(todo_details.body, sizeof(todo_details.body), stdin);
     todo_details.body[strlen(todo_details.body) - 1] = '\0'; //fgets always adds '\n' character to inputs, this function gets read of the character
+
+    //Getting todo title from the user
+    printf("ENTER YOUR TODO TITLE(e.g FOOTBALL):\t");
+    fgets(todo_details.title, sizeof(todo_details.title), stdin);
+    todo_details.title[strlen(todo_details.title) - 1] = '\0'; //fgets always adds '\n' character to inputs, this function gets read of the character
 
     //Adding the current time
     strcpy(todo_details.time, ctime(&now));
@@ -303,4 +291,85 @@ void search_todo()
             printf("\nUSE THE SCREEN SCROLL BAR TO SCROLL THROUGH THE SEARCH RESULT IF NEEDED\n\n");
         }
     }
+}
+
+//Function that updates todo
+void update_todo(void)
+{
+
+    FILE *fp;
+    FILE *fp2;
+    char title[100];
+    char opt;
+    int found;
+    struct todo update_t;
+
+    printf("ENTER THE COMPLETE AND CORRECT TITLE OF THE TODO YOU WISH TO UPDATE:\t");
+    fgets(title, sizeof(title), stdin);
+    title[strlen(title) - 1] = '\0'; //fgets function always adds '\n' character to inputs, this function gets rid of the character.
+    fp = fopen("MyTodo.dat", "r");
+    if (fp == NULL)
+    {
+        printf("\nTODO LIST IS EMPTY OR SAVE FILE HAS BEEN DELETED\n");
+    } else
+    {
+        fp2 = fopen("tempfile.dat", "a");
+        found = 0;
+
+        //Here we loop through all the TODOS in the saved file and copy each TODO to a new file except the todo we want to change change
+        while (fread(&update_t, sizeof(struct todo), 1, fp) != 0)
+        {
+            clear_screen();
+
+            //This checks the file for the title the user entered to see if it matches with any of the TODO TITLE in the file
+            //If there's a match, user would be prompted for new inputs and these would be saved in the new file in place of the matched todo
+            //The strcmp() comapares two strings together and returns 0 only if they are the same
+            //The strupper converts strings to uppercase
+            if (strcmp(strupper(update_t.title), strupper(title)) == 0)
+            {
+                display_todo(&update_t);//display the todo for confirmation
+                action_control(&opt, "Is that the TODO you wish to edit?");
+                if (opt == 'y' || opt == 'Y')
+                {
+                    clear_screen();
+                    printf("\nENTER YOUR NEW TODO DETAILS:\t\t");
+                    fgets(update_t.body, sizeof(update_t.body), stdin);
+                    update_t.body[strlen(update_t.body) - 1] = '\0';
+                    printf("ENTER A NEW TITLE OR THE OLD ONE:\t");
+                    fgets(update_t.title, sizeof(update_t.title), stdin);
+                    update_t.title[strlen(update_t.title) - 1] = '\0';
+                    found = 1; //Confirms that a todo was edited
+
+                    fwrite(&update_t, sizeof(struct todo), 1, fp2); //saving the new iput to the new file
+                } else
+                {
+                    fwrite(&update_t, sizeof(struct todo), 1, fp2);
+                }
+
+            } else
+            {
+                fwrite(&update_t, sizeof(struct todo), 1, fp2);
+            }
+        }
+        fclose(fp);
+        fclose(fp2);
+
+        clear_screen();
+        //After the search, if there is a match, that means we'd surely edit a todo, so the old file is deleted and the new file is renamed to the old file
+        //If we do not rename the newfile to the old file, we won't be able to access the file content later on in our program
+        if (found == 1)//That means we succefully edited a TODO
+        {
+            remove("MyTodo.dat");
+            rename("tempfile.dat", "MyTodo.dat");
+            printf("TODO EDITED SUCCESSFULLY\n");
+
+        }else
+        {
+            //The tempfile is removed bcoz it's not different from the old file since we edited no todo
+            remove("tempfile.dat");
+            printf("No match found for the title you entered!\n");
+        }
+    }
+    printf("\n\nPRESS ENTER KEY TO RETURN TO THE MAIN MENU");
+    getchar();
 }
