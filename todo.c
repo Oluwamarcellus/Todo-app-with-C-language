@@ -28,7 +28,8 @@ int main(void)
     char name[20];
     char a_opt;
 
-    printf("WELCOME, PLEASE ENTER YOUR NAME:   ");
+    printf("\nWELCOME, PLEASE ENTER YOUR NAME:\n\n");
+    printf("=>  ");
     fgets(name, 21, stdin);
     name[strlen(name) - 1] = '\0'; //fgets function always adds '\n' character to inputs, this function gets rid of the character.
 
@@ -93,7 +94,6 @@ int main(void)
                 {
                     clear_screen();
                     search_todo(); //Function that searches Todo, it's defined below
-
                     action_control(&a_opt, "Do you wish to perform another SEARCH?");
                 }
             break;
@@ -181,12 +181,15 @@ void add_todo(void)
     struct todo todo_details;
 
     //Getting todo message from the user
-    printf("ENTER YOUR TODO DETAILS:\t\t");
+    printf("TYPE YOUR TODO DETAILS:\n\n");
+    printf("=>  ");
     fgets(todo_details.body, sizeof(todo_details.body), stdin);
     todo_details.body[strlen(todo_details.body) - 1] = '\0'; //fgets always adds '\n' character to inputs, this function gets read of the character
+    clear_screen();
 
     //Getting todo title from the user
-    printf("ENTER YOUR TODO TITLE(e.g FOOTBALL):\t");
+    printf("ENTER A TITLE FOR THE TODO(e.g FOOTBALL):\n\n");
+    printf("=>  ");
     fgets(todo_details.title, sizeof(todo_details.title), stdin);
     todo_details.title[strlen(todo_details.title) - 1] = '\0'; //fgets always adds '\n' character to inputs, this function gets read of the character
 
@@ -198,6 +201,7 @@ void add_todo(void)
     if (fp == NULL)
     {
         printf("FAIL TO SAVE TODO, PLEASE TRY AGAIN\n\n");
+        return;
     } else
     {
         fwrite(&todo_details, sizeof(struct todo), 1, fp);
@@ -230,6 +234,7 @@ void display_all_todo(void)
     if (fp == NULL)
     {
         printf("YOUR TODO LIST IS EMPTY OR THE SAVE FILE HAS BEEN DELETED, TRY CREATING NEW TODOS\n\n");
+        return;
     } else
     {
         found = 0;
@@ -260,7 +265,8 @@ void search_todo()
     int found;
     struct todo stodo;
 
-    printf("Please enter any word from the title of the todo you want to search:\t");
+    printf("PLEASE ENTER ANY WORLD FROM THE TITLE OF THE TODO YOU WANT TO SEARCH:\n\n");
+    printf("=>  ");
     fgets(str, sizeof(str), stdin);
     str[strlen(str) - 1] = '\0'; //fgets always adds '\n' character to inputs, this function gets read of the character
     fp = fopen("MyTodo.dat", "r");
@@ -268,6 +274,7 @@ void search_todo()
     if (fp == NULL)
     {
         printf("\nFAILED TO OPEN FILE, PLEASE TRY AGAIN\n\n");
+        return;
     } else
     {
             //This checks if the user input matches with any todo title from the saved file we're looping through
@@ -292,6 +299,7 @@ void search_todo()
             printf("\nUSE THE SCREEN SCROLL BAR TO SCROLL THROUGH THE SEARCH RESULT IF NEEDED\n\n");
         }
     }
+    fclose(fp);
 }
 
 //Function that updates todo
@@ -305,7 +313,8 @@ void update_todo(void)
     int found;
     struct todo update_t;
 
-    printf("ENTER THE COMPLETE AND CORRECT TITLE OF THE TODO YOU WISH TO UPDATE:\t");
+    printf("ENTER THE COMPLETE AND CORRECT TITLE OF THE TODO YOU WISH TO UPDATE:\n\n");
+    printf("=>  ");
     fgets(title, sizeof(title), stdin);
     title[strlen(title) - 1] = '\0'; //fgets function always adds '\n' character to inputs, this function gets rid of the character.
     fp = fopen("MyTodo.dat", "r");
@@ -333,10 +342,14 @@ void update_todo(void)
                 if (opt == 'y' || opt == 'Y')
                 {
                     clear_screen();
-                    printf("\nENTER YOUR NEW TODO DETAILS:\t\t");
+                    printf("ENTER YOUR NEW TODO DETAILS:\n\n");
+                    printf("=>  ");
                     fgets(update_t.body, sizeof(update_t.body), stdin);
                     update_t.body[strlen(update_t.body) - 1] = '\0';
-                    printf("ENTER A NEW TITLE OR THE OLD ONE:\t");
+                    clear_screen();
+
+                    printf("ENTER A NEW TITLE OR THE OLD ONE(e.g FOOTBALL):\n\n");
+                    printf("=>  ");
                     fgets(update_t.title, sizeof(update_t.title), stdin);
                     update_t.title[strlen(update_t.title) - 1] = '\0';
                     found = 1; //Confirms that a todo was edited
@@ -368,7 +381,7 @@ void update_todo(void)
         {
             //The tempfile is removed bcoz it's not different from the old file since we edited no todo
             remove("tempfile.dat");
-            printf("No match found for the title you entered!\n");
+            printf("NO MATCH FOUND FOR THE TITLE YOU ENTERED!\n");
         }
     }
     printf("\n\nPRESS ENTER KEY TO RETURN TO THE MAIN MENU");
