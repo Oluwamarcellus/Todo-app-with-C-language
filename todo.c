@@ -3,6 +3,17 @@
 #include <string.h>
 #include <time.h>
 
+/**TRYING TO DEFINE A MACRO FOR OUR SYSTEM() CALL FUNCTION
+ * BASDE ON THE COPILING ENVIRONMENT (WINDOWS OR LINUX)
+*/
+#ifdef _WIN32
+#define CLEAR "cls"
+#elif defined(__linux__)
+#define CLEAR "clear"
+#endif
+/**----------------------------------------------*/
+
+
 struct todo
 {
     char body[2000];
@@ -21,9 +32,10 @@ struct todo
     void action_control(char *ch, char *str);
     char *strupper(char *s);
     void update_todo(void);
+    void delete_todo(void);
 
-int main(void)
-{
+    int main(void)
+    {
     int t_opt;
     char name[20];
     char a_opt;
@@ -49,7 +61,9 @@ int main(void)
             printf("5. To delete todo\n");
             printf("6. To quit\n");
             printf("\nYOUR CHOICE: \t");
-            scanf("%d", &t_opt);
+            int outcome = scanf("%d", &t_opt);
+	    if (outcome == -1 || outcome == EOF)
+		    exit(0);
             clear_input_stream();//cleans the input stream after user's inputs, it is defined below main function
             clear_screen();
 
@@ -105,7 +119,7 @@ int main(void)
 
             case 5:
                 clear_screen();
-                printf("\n\n\t\t\tdelete todo\n\n\n\n", name);
+                delete_todo();
             break;
 
             case 6:
@@ -134,7 +148,7 @@ void clear_input_stream(void)
 //function that clears the screen
 void clear_screen(void)
 {
-    system("cls");
+    system(CLEAR);
 }
 
 //FGunction that convert string to uppercase
@@ -144,7 +158,8 @@ char *strupper(char *s)
         return 0;
     for (int i = 0; s[i] != 0; i++)
     {
-        s[i] = toupper(s[i]); //toupper is string.h library function that converts a character to uppercase
+        if (s[i] >= 'a' && s[i] <= 'z')
+	    s[i] = s[i] - 32;
     }
     return s;
 }
@@ -382,6 +397,78 @@ void update_todo(void)
             //The tempfile is removed bcoz it's not different from the old file since we edited no todo
             remove("tempfile.dat");
             printf("NO MATCH FOUND FOR THE TITLE YOU ENTERED!\n");
+        }
+    }
+    printf("\n\nPRESS ENTER KEY TO RETURN TO THE MAIN MENU");
+    getchar();
+}
+
+void delete_todo(void)
+{
+    FILE *fp;
+    FILE *fp2;
+    char title[100];
+    char opt;
+    int found;
+    struct todo update_t;
+
+    printf("ENTER THE COMPLETE AND CORRECT TITLE OF THE TODO YOU WISH TO DELETE:\n\n");
+    printf("=>  ");
+    fgets(title, sizeof(title), stdin);
+    title[strlen(title) - 1] = '\0'; //fgets function always adds '\n' character to inputs, this function gets rid of the character.
+    fp = fopen("MyTodo.dat", "r");
+    if (fp == NULL)
+    {
+        printf("\nTODO LIST IS EMPTY OR SAVE FILE HAS BEEN DELETED\n");
+    } else
+    {
+        fp2 = fopen("tempfile.dat", "a");
+        found = 0;
+
+        //Here we loop through all the TODOS in the saved file and copy each TODO to a new file except the todo we want to delete
+        while (fread(&update_t, sizeof(struct todo), 1, fp) != 0)
+        {
+            clear_screen();
+
+            //This checks the file for the title the user entered to see if it matches with any of the TODO TITLE in the file
+            //If there's a match, user would be prompted 
+            //The strcmp() compares two strings together and returns 0 only if they are the same
+            //The strupper converts strings to uppercase
+            if (strcmp(strupper(update_t.title), strupper(title)) == 0)
+            {
+                display_todo(&update_t);//display the todo for confirmation
+                action_control(&opt, "Is that the TODO you wish to delete?");
+                if (opt == 'y' || opt == 'Y')
+                {
+                    clear_screen();
+                    found = 1; //Confirms that a todo was deleted
+                } else
+                {
+                    fwrite(&update_t, sizeof(struct todo), 1, fp2);
+                }
+
+            } else
+            {
+                fwrite(&update_t, sizeof(struct todo), 1, fp2);
+            }
+        }
+        fclose(fp);
+        fclose(fp2);
+
+        clear_screen();
+        //After the search, if there is a match, that means we'd surely deleted a todo, so the old file is deleted and the new file is renamed to the old file
+        //If we do not rename the newfile to the old file, we won't be able to access the file content later on in our program
+        if (found == 1)//That means we succefully deleted a TODO
+        {
+            remove("MyTodo.dat");
+            rename("tempfile.dat", "MyTodo.dat");
+            printf("TODO DELETED SUCCESSFULLY\n");
+
+        }else
+        {
+            //The tempfile is removed bcoz it's not different from the old file since we edited no todo
+            remove("tempfile.dat");
+            printf("NO MATCH, NOTHING DELETED!\n");
         }
     }
     printf("\n\nPRESS ENTER KEY TO RETURN TO THE MAIN MENU");
