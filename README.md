@@ -1,6 +1,6 @@
 ****Todo App with C designed by Adebayo Ayowale and Sani Brian****
-https://replit.com/@Oluwamarc1/Todo-App-with-C#main.c
-Comprenhensive details of how the program works is commented inside the source code, please check it out
+
+Repl link to test the program: https://replit.com/@Oluwamarc1/Todo-App-with-C#main.c
 
 What the program can do...
 1. Create a file for users to keep all their todos saved locally on their machines 
@@ -11,3 +11,5 @@ What the program can do...
 6. Search for todo with todo title
 7. Update todo keeping the order and time intact
 8. Search and delete todo
+
+Comprenhensive details of how the program works is commented inside the source code, please check it out
